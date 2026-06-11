@@ -1,0 +1,16 @@
+[
+  {
+    "date": "2026-06-10",
+    "steno": true,
+    "tc": false,
+    "english_mock": { "done": true, "percentile": 85.5 },
+    "reasoning_mock": { "done": true, "percentile": 90.0 }
+  },
+  {
+    "date": "2026-06-11",
+    "steno": true,
+    "tc": true,
+    "english_mock": { "done": true, "percentile": 89.2 },
+    "reasoning_mock": { "done": true, "percentile": 94.5 }
+  }
+]

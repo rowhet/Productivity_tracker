@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #111827; color: #f3f4f6; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .chart-box { background: #1f2937; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Productivity Journey</h1>
+        <div class="chart-box">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the local json file
+        fetch('data.json')
+            .then(res => res.json())
+            .then(data => {
+                const dates = data.map(e => e.date);
+                const eng = data.map(e => e.english_mock.done ? e.english_mock.percentile : null);
+                const reas = data.map(e => e.reasoning_mock.done ? e.reasoning_mock.percentile : null);
+
+                new Chart(document.getElementById('myChart'), {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [
+                            { label: 'English % Govt Rank', data: eng, borderColor: '#3b82f6', tension: 0.1 },
+                            { label: 'Reasoning % Govt Rank', data: reas, borderColor: '#a855f7', tension: 0.1 }
+                        ]
+                    },
+                    options: { scales: { y: { min: 0, max: 100 } } }
+                });
+            })
+            .catch(err => console.error("Data failed to load:", err));
+    </script>
+</body>
+</html>
