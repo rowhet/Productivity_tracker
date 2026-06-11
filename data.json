@@ -1,16 +1,32 @@
 [
-  {
-    "date": "2026-06-10",
-    "steno": true,
-    "tc": false,
-    "english_mock": { "done": true, "percentile": 85.5 },
-    "reasoning_mock": { "done": true, "percentile": 90.0 }
-  },
-  {
-    "date": "2026-06-11",
-    "steno": true,
-    "tc": true,
-    "english_mock": { "done": true, "percentile": 89.2 },
-    "reasoning_mock": { "done": true, "percentile": 94.5 }
-  }
+    {
+        "date": "2026-06-10",
+        "academic_data": {
+            "english": {
+                "mock_desc": "Baseline Test",
+                "total_marks": 100.0,
+                "marks_obtained": 75.0,
+                "total_attempt": 90.0,
+                "wrong_answers": 15.0,
+                "accuracy": 83.3,
+                "baseline": 70.0
+            },
+            "arithmetic": null,
+            "ga": null,
+            "reasoning": null
+        },
+        "shorthand_data": {
+            "speed_wpm": 80.0,
+            "word_count": 400.0,
+            "accuracy": 95.0,
+            "topic": "Introductory Session",
+            "notes": "Initial setup baseline."
+        },
+        "miscellaneous_data": {
+            "english_vocabulary": "present",
+            "typing_practice": "present",
+            "computer": "planned_break",
+            "shorthand_stroke": "absent"
+        }
+    }
 ]
