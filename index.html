@@ -3,44 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracker Dashboard</title>
+    <title>Process-Based Core Intelligence Deck</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tailwind-cdn@3.4.1/index.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #111827; color: #f3f4f6; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .chart-box { background: #1f2937; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; }
+        .grid-cell { width: 12px; height: 12px; border-radius: 2px; }
+        .status-present { background-color: #10b981; }
+        .status-absent { background-color: #ef4444; }
+        .status-break { background-color: #f59e0b; }
+        .status-empty { background-color: #1f2937; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>My Productivity Journey</h1>
-        <div class="chart-box">
-            <canvas id="myChart"></canvas>
+<body class="text-slate-200 min-h-screen flex">
+
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col fixed h-full">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-lg font-bold tracking-wider text-blue-400 uppercase">Process Core</h1>
+            <p class="text-xs text-slate-500 mt-1">Data-Driven Evolution Workspace</p>
         </div>
-    </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">Subject Metrics</div>
+            <button onclick="switchView('english')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-between bg-slate-800 text-blue-400" id="btn-english">English Mocks</button>
+            <button onclick="switchView('arithmetic')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200" id="btn-arithmetic">Arithmetic Mocks</button>
+            <button onclick="switchView('ga')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200" id="btn-ga">General Awareness</button>
+            <button onclick="switchView('reasoning')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200" id="btn-reasoning">Logical Reasoning</button>
+            
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 pt-6 mb-2">Skillsets</div>
+            <button onclick="switchView('shorthand')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200" id="btn-shorthand">Shorthand System</button>
+            
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 pt-6 mb-2">Daily Discipline</div>
+            <button onclick="switchView('misc')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200" id="btn-misc">Habit Consistency</button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 ml-64 p-8 min-h-screen overflow-x-hidden">
+        
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h2 id="view-title" class="text-2xl font-bold text-slate-100">English Evaluation Terminal</h2>
+                <p id="view-desc" class="text-sm text-slate-400">Granular timeline analytics mapping net metrics against targets.</p>
+            </div>
+            
+            <div id="time-filters" class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex space-x-1">
+                <button onclick="setTimeframe('all')" class="time-btn px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 text-white" id="t-all">Continuous</button>
+                <button onclick="setTimeframe('month')" class="time-btn px-3 py-1.5 text-xs font-medium rounded-md text-slate-400 hover:text-slate-200" id="t-month">30 Days</button>
+                <button onclick="setTimeframe('week')" class="time-btn px-3 py-1.5 text-xs font-medium rounded-md text-slate-400 hover:text-slate-200" id="t-week">7 Days</button>
+            </div>
+        </header>
+
+        <section id="chart-viewport" class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-xl mb-8 relative" style="height: 450px;">
+            <canvas id="primaryChart"></canvas>
+        </section>
+
+        <section id="shorthand-log-panel" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Mean System Speed</div>
+                    <div id="sh-card-speed" class="text-3xl font-bold text-blue-400 mt-2">0 WPM</div>
+                </div>
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Top Geometric Precision</div>
+                    <div id="sh-card-acc" class="text-3xl font-bold text-emerald-400 mt-2">0%</div>
+                </div>
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Gross Words Processed</div>
+                    <div id="sh-card-words" class="text-3xl font-bold text-purple-400 mt-2">0</div>
+                </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-800 bg-slate-900/50"><h3 class="font-semibold text-slate-300">Chronological Dictation Repository</h3></div>
+                <div class="overflow-x-auto"><table class="w-full text-left text-sm text-slate-400"><thead class="bg-slate-800/50 text-xs uppercase tracking-wider text-slate-500"><tr class="border-b border-slate-800"><th class="px-6 py-3">Date</th><th class="px-6 py-3">Topic / Manual Profile</th><th class="px-6 py-3">Speed</th><th class="px-6 py-3">Accuracy</th><th class="px-6 py-3">Execution Commentary Notes</th></tr></thead><tbody id="shorthand-table-rows"></tbody></table></div>
+            </div>
+        </section>
+
+        <section id="misc-matrix-panel" class="hidden space-y-8"></section>
+    </main>
 
     <script>
-        // Fetch the local json file
-        fetch('data.json')
-            .then(res => res.json())
-            .then(data => {
-                const dates = data.map(e => e.date);
-                const eng = data.map(e => e.english_mock.done ? e.english_mock.percentile : null);
-                const reas = data.map(e => e.reasoning_mock.done ? e.reasoning_mock.percentile : null);
+        let database = [];
+        let activeView = 'english';
+        let activeTimeframe = 'all';
+        let chartInstance = null;
 
-                new Chart(document.getElementById('myChart'), {
-                    type: 'line',
-                    data: {
-                        labels: dates,
-                        datasets: [
-                            { label: 'English % Govt Rank', data: eng, borderColor: '#3b82f6', tension: 0.1 },
-                            { label: 'Reasoning % Govt Rank', data: reas, borderColor: '#a855f7', tension: 0.1 }
-                        ]
+        async function init() {
+            try {
+                const response = await fetch('data.json?nocache=' + new Date().getTime());
+                database = await response.json();
+                renderWorkspace();
+            } catch (e) {
+                console.error("System Error loading operational parameters:", e);
+            }
+        }
+
+        function switchView(viewKey) {
+            activeView = viewKey;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-slate-800', 'text-blue-400'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-slate-400', 'hover:bg-slate-800'));
+            document.getElementById(`btn-${viewKey}`).classList.add('bg-slate-800', 'text-blue-400');
+
+            const tfBox = document.getElementById('time-filters');
+            const cvBox = document.getElementById('chart-viewport');
+            const shLog = document.getElementById('shorthand-log-panel');
+            const msLog = document.getElementById('misc-matrix-panel');
+
+            tfBox.classList.remove('hidden');
+            cvBox.classList.remove('hidden');
+            shLog.classList.add('hidden');
+            msLog.classList.add('hidden');
+
+            if(viewKey === 'shorthand') {
+                document.getElementById('view-title').innerText = "Shorthand Matrix System";
+                document.getElementById('view-desc').innerText = "Muscle-memory velocity analysis tracking shorthand geometric error margins.";
+                shLog.classList.remove('hidden');
+            } else if (viewKey === 'misc') {
+                document.getElementById('view-title').innerText = "Habit-Formation Matrices";
+                document.getElementById('view-desc').innerText = "High-density micro-attendance calendar grids mapping compliance architecture.";
+                tfBox.classList.add('hidden');
+                cvBox.classList.add('hidden');
+                msLog.classList.remove('hidden');
+            } else {
+                const titles = { english: 'English Evaluation Terminal', arithmetic: 'Arithmetic Evaluation Terminal', ga: 'General Awareness Engine', reasoning: 'Logical Reasoning Deck' };
+                document.getElementById('view-title').innerText = titles[viewKey];
+                document.getElementById('view-desc').innerText = "Granular timeline analytics mapping net metrics against targets.";
+            }
+            renderWorkspace();
+        }
+
+        function setTimeframe(tfKey) {
+            activeTimeframe = tfKey;
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.add('text-slate-400', 'hover:text-slate-200'));
+            document.getElementById(`t-${tfKey}`).classList.add('bg-blue-600', 'text-white');
+            renderWorkspace();
+        }
+
+        function getFilteredData() {
+            if (activeTimeframe === 'all') return database;
+            const now = new Date();
+            const days = activeTimeframe === 'week' ? 7 : 30;
+            const cutOff = new Date(now.setDate(now.getDate() - days)).toISOString().split('T')[0];
+            return database.filter(d => d.date >= cutOff);
+        }
+
+        function renderWorkspace() {
+            const dataPool = getFilteredData();
+            if(chartInstance) { chartInstance.destroy(); chartInstance = null; }
+
+            if(activeView !== 'misc' && activeView !== 'shorthand') {
+                renderAcademicChart(dataPool, activeView);
+            } else if (activeView === 'shorthand') {
+                renderShorthandModule(dataPool);
+            } else if (activeView === 'misc') {
+                renderMiscMatrixModule();
+            }
+        }
+
+        function renderAcademicChart(slice, key) {
+            const labels = slice.map(d => d.date);
+            const scoreData = slice.map(d => d.academic_data[key] ? d.academic_data[key].marks_obtained : null);
+            const baseData = slice.map(d => d.academic_data[key] ? d.academic_data[key].baseline : null);
+            const accData = slice.map(d => d.academic_data[key] ? d.academic_data[key].accuracy : null);
+            const attemptData = slice.map(d => d.academic_data[key] ? d.academic_data[key].total_attempt : null);
+            const wrongData = slice.map(d => d.academic_data[key] ? d.academic_data[key].wrong_answers : null);
+
+            const ctx = document.getElementById('primaryChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Marks Scaled', data: scoreData, borderColor: '#3b82f6', backgroundColor: '#3b82f6', yAxisID: 'y', borderWidth: 2.5, tension: 0.1, spanGaps: true },
+                        { label: 'Baseline Target', data: baseData, borderColor: '#4b5563', borderDash: [6, 4], pointRadius: 0, yAxisID: 'y', borderWidth: 1.5, fill: false, spanGaps: true },
+                        { label: 'Accuracy %', data: accData, borderColor: '#10b981', yAxisID: 'yAcc', borderWidth: 2, tension: 0.1, spanGaps: true, borderDash: [2, 2] },
+                        { label: 'Attempts Vol', data: attemptData, type: 'bar', backgroundColor: 'rgba(55, 65, 81, 0.3)', yAxisID: 'yBar', barThickness: 18 },
+                        { label: 'Wrong Register', data: wrongData, type: 'line', borderColor: '#ef4444', pointRadius: 2, yAxisID: 'yBar', borderWidth: 1.5, spanGaps: true }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { position: 'left', grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' }, title: { display: true, text: 'Marks Scale', color: '#9ca3af' } },
+                        yAcc: { position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: { color: '#10b981' }, title: { display: true, text: 'Accuracy % Scale', color: '#10b981' } },
+                        yBar: { position: 'right', min: 0, grid: { drawOnChartArea: false }, display: false },
+                        x: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } }
                     },
-                    options: { scales: { y: { min: 0, max: 100 } } }
-                });
-            })
-            .catch(err => console.error("Data failed to load:", err));
+                    plugins: { legend: { labels: { color: '#e2e8f0', font: { size: 11 } } } }
+                }
+            });
+        }
+
+        function renderShorthandModule(slice) {
+            const labels = slice.map(d => d.date);
+            const speedData = slice.map(d => d.shorthand_data ? d.shorthand_data.speed_wpm : null);
+            const accData = slice.map(d => d.shorthand_data ? d.shorthand_data.accuracy : null);
+
+            // Compute summary metrics cards
+            let grossSpeed = 0, grossAcc = 0, totalWords = 0, validSessions = 0;
+            const rowsContainer = document.getElementById('shorthand-table-rows');
+            rowsContainer.innerHTML = '';
+
+            slice.forEach(d => {
+                if(d.shorthand_data) {
+                    const sh = d.shorthand_data;
+                    grossSpeed += sh.speed_wpm;
+                    grossAcc += sh.accuracy;
+                    totalWords += sh.word_count;
+                    validSessions++;
+
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-slate-800 hover:bg-slate-800/30 transition";
+                    tr.innerHTML = `<td class="px-6 py-3.5 font-medium text-slate-300">${d.date}</td>
+                                    <td class="px-6 py-3.5 text-blue-400 font-medium">${sh.topic || 'General Practice'}</td>
+                                    <td class="px-6 py-3.5"><span class="bg-blue-950 text-blue-400 px-2.5 py-0.5 rounded text-xs font-semibold">${sh.speed_wpm} WPM</span></td>
+                                    <td class="px-6 py-3.5"><span class="bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded text-xs font-semibold">${sh.accuracy}%</span></td>
+                                    <td class="px-6 py-3.5 text-xs text-slate-400 max-w-xs truncate" title="${sh.notes || ''}">${sh.notes || 'No extra notes.'}</td>`;
+                    rowsContainer.appendChild(tr);
+                }
+            });
+
+            document.getElementById('sh-card-speed').innerText = validSessions ? `${Math.round(grossSpeed / validSessions)} WPM` : '0 WPM';
+            document.getElementById('sh-card-acc').innerText = validSessions ? `${Math.round(grossAcc / validSessions)}%` : '0%';
+            document.getElementById('sh-card-words').innerText = totalWords.toLocaleString();
+
+            const ctx = document.getElementById('primaryChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Accuracy Trend (%)', data: accData, borderColor: '#10b981', backgroundColor: '#10b981', yAxisID: 'y', borderWidth: 2.5, tension: 0.1, spanGaps: true },
+                        { label: 'Dictation Speed (WPM)', data: speedData, borderColor: '#3b82f6', backgroundColor: '#3b82f6', yAxisID: 'ySpeed', borderWidth: 2, stepped: true, spanGaps: true }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { position: 'left', min: 0, max: 100, grid: { color: '#1f2937' }, ticks: { color: '#10b981' }, title: { display: true, text: 'Accuracy Scale %', color: '#10b981' } },
+                        ySpeed: { position: 'right', min: 40, max: 160, grid: { drawOnChartArea: false }, ticks: { color: '#3b82f6' }, title: { display: true, text: 'Velocity Scale (WPM)', color: '#3b82f6' } },
+                        x: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } }
+                    },
+                    plugins: { legend: { labels: { color: '#e2e8f0' } } }
+                }
+            });
+        }
+
+        function renderMiscMatrixModule() {
+            const container = document.getElementById('misc-matrix-panel');
+            container.innerHTML = '';
+
+            const items = {
+                english_vocabulary: "English Vocabulary Operations",
+                typing_practice: "High-Speed Typing Drills",
+                computer: "Computer Theory Requirements",
+                shorthand_stroke: "Shorthand Geometric Outlines"
+            };
+
+            // Generate chronological sequence for 2026 framework
+            const dateMap = {};
+            database.forEach(d => {
+                if(d.miscellaneous_data) dateMap[d.date] = d.miscellaneous_data;
+            });
+
+            const currentYear = 2026;
+            const monthsArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            Object.entries(items).forEach(([key, title]) => {
+                let presentCount = 0, absentCount = 0, breakCount = 0;
+                
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-8 items-center";
+                
+                const layoutWrapper = document.createElement('div');
+                layoutWrapper.className = "flex-1 overflow-x-auto w-full";
+                
+                const gridTitle = document.createElement('h4');
+                gridTitle.className = "text-md font-semibold text-slate-300 mb-4";
+                gridTitle.innerText = title;
+                layoutWrapper.appendChild(gridTitle);
+
+                const containerMatrix = document.createElement('div');
+                containerMatrix.className = "flex space-x-3";
+
+                // Map multi-matrix nodes grid arrays per calendar metrics
+                for(let m = 0; m < 12; m++) {
+                    const monthColumn = document.createElement('div');
+                    monthColumn.className = "flex flex-col space-y-1 items-center";
+                    
+                    const mLabel = document.createElement('span');
+                    mLabel.className = "text-[10px] font-medium text-slate-500 mb-1";
+                    mLabel.innerText = monthsArray[m];
+                    monthColumn.appendChild(mLabel);
+
+                    const gridDays = document.createElement('div');
+                    gridDays.className = "grid grid-rows-7 grid-flow-col gap-1";
+
+                    const daysCount = new Date(currentYear, m + 1, 0).getDate();
+                    for(let d = 1; d <= daysCount; d++) {
+                        const dateStr = `${currentYear}-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                        const cell = document.createElement('div');
+                        cell.className = "grid-cell";
+                        
+                        // Default to absent rule if not tracked
+                        let status = "empty";
+                        if(dateMap[dateStr]) {
+                            status = dateMap[dateStr][key] || "absent";
+                        } else {
+                            const todayStr = new Date().toISOString().split('T')[0];
+                            if (dateStr <= todayStr) status = "absent";
+                        }
+
+                        if(status === 'present') { cell.classList.add('status-present'); presentCount++; }
+                        else if(status === 'absent') { cell.classList.add('status-absent'); absentCount++; }
+                        else if(status === 'planned_break') { cell.classList.add('status-break'); breakCount++; }
+                        else { cell.classList.add('status-empty'); }
+
+                        cell.setAttribute('title', `${dateStr} : ${status.replace('_', ' ').toUpperCase()}`);
+                        gridDays.appendChild(cell);
+                    }
+                    monthColumn.appendChild(gridDays);
+                    containerMatrix.appendChild(monthColumn);
+                }
+
+                layoutWrapper.appendChild(containerMatrix);
+
+                // Build macro summary performance panel widget
+                const totalCalculated = presentCount + absentCount + breakCount || 1;
+                const scoreMacro = document.createElement('div');
+                scoreMacro.className = "w-full md:w-56 bg-slate-950/60 border border-slate-800/80 p-4 rounded-xl space-y-2 text-xs text-slate-400";
+                scoreMacro.innerHTML = `<h5 class="font-bold text-slate-300 text-center border-b border-slate-800 pb-1.5 uppercase tracking-wider">Macro Summary</h5>
+                                        <div class="flex justify-between"><span>Present (Metrics):</span><span class="text-emerald-400 font-bold">${presentCount}d (${Math.round(presentCount/totalCalculated*100)}%)</span></div>
+                                        <div class="flex justify-between"><span>Absent (Missed):</span><span class="text-red-400 font-bold">${absentCount}d (${Math.round(absentCount/totalCalculated*100)}%)</span></div>
+                                        <div class="flex justify-between"><span>Planned Break:</span><span class="text-amber-400 font-bold">${breakCount}d (${Math.round(breakCount/totalCalculated*100)}%)</span></div>`;
+                
+                card.appendChild(layoutWrapper);
+                card.appendChild(scoreMacro);
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
