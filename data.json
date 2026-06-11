@@ -1,15 +1,15 @@
 [
     {
-        "date": "2026-06-10",
+        "date": "2026-06-11",
         "academic_data": {
             "english": {
-                "mock_desc": "Baseline Test",
-                "total_marks": 100.0,
-                "marks_obtained": 75.0,
-                "total_attempt": 90.0,
-                "wrong_answers": 15.0,
-                "accuracy": 83.3,
-                "baseline": 70.0
+                "mock_desc": "Eng",
+                "total_marks": 50.0,
+                "marks_obtained": 45.0,
+                "total_attempt": 45.0,
+                "wrong_answers": 0.0,
+                "accuracy": 90.0,
+                "baseline": 35.0
             },
             "arithmetic": null,
             "ga": null,
@@ -18,15 +18,15 @@
         "shorthand_data": {
             "speed_wpm": 80.0,
             "word_count": 400.0,
-            "accuracy": 95.0,
-            "topic": "Introductory Session",
-            "notes": "Initial setup baseline."
+            "accuracy": 80.0,
+            "topic": "Farmer",
+            "notes": ""
         },
         "miscellaneous_data": {
             "english_vocabulary": "present",
             "typing_practice": "present",
-            "computer": "planned_break",
-            "shorthand_stroke": "absent"
+            "computer": "present",
+            "shorthand_stroke": "present"
         }
     }
 ]
