@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import subprocess
 
-# Define absolute filepaths
+# Absolute paths
 BASE_DIR = r"E:\Productivity-tracker"
 EXCEL_PATH = os.path.join(BASE_DIR, "Poductivity_Tracker.xlsx")
 JSON_PATH = os.path.join(BASE_DIR, "data.json")
@@ -14,70 +14,75 @@ def parse_excel_to_json():
         print(f"❌ Error: Could not locate Excel template at: {EXCEL_PATH}")
         return False
         
-    # Read Excel sheet safely
+    # Read Excel sheet
     df = pd.read_excel(EXCEL_PATH, sheet_name=0)
-    
-    # Strip whitespace from column names to prevent mapping errors
     df.columns = df.columns.str.strip()
-    
-    # Drop completely empty rows
     df = df.dropna(how='all')
     
     database = []
     
     for _, row in df.iterrows():
-        # Safeguard: Verify date existence
         if pd.isna(row['Date']):
             continue
             
-        # Standardize date to string YYYY-MM-DD
         date_str = str(row['Date']).split(' ')[0]
         
-        # 1. Structure Academic Section dynamically
-        sub_key = str(row['Mock_Subject']).strip().lower() if not pd.isna(row['Mock_Subject']) else None
-        
+        # 1. Map Subject Data Blocks explicitly from their own side-by-side columns
         academic_data = {
             "english": None,
-            "arithmetic": None,
+            "arithmetic": None, # Kept placeholder for matching dashboard sidebars
             "ga": None,
             "reasoning": None
         }
         
-        # Map specific subject if scores are populated
-        if sub_key in academic_data and not pd.isna(row['Total_Marks']) and not pd.isna(row['Marks_Obtained']):
-            tot = float(row['Total_Marks'])
-            obt = float(row['Marks_Obtained'])
-            att = float(row['Total_Attempt']) if not pd.isna(row['Total_Attempt']) else obt
-            wrg = float(row['Wrong_Answers']) if not pd.isna(row['Wrong_Answers']) else 0.0
-            
-            # Formulate baseline logic based on standard requirements
-            base_targets = {"english": 35.0, "arithmetic": 20.0, "ga": 25.0, "reasoning": 22.0}
-            baseline = base_targets.get(sub_key, 35.0)
-            
-            accuracy = round(( (att - wrg) / att ) * 100, 1) if att > 0 else 100.0
-            
-            academic_data[sub_key] = {
-                "mock_desc": str(row['Mock_Name']) if not pd.isna(row['Mock_Name']) else "Sectional Assessment",
-                "total_marks": tot,
-                "marks_obtained": obt,
-                "total_attempt": att,
-                "wrong_answers": wrg,
-                "accuracy": accuracy,
-                "baseline": baseline
+        # English Parser
+        if not pd.isna(row.get('Eng_Total')) and not pd.isna(row.get('Eng_Obtained')):
+            academic_data["english"] = {
+                "mock_desc": str(row['Eng_Mock_Desc']) if not pd.isna(row.get('Eng_Mock_Desc')) else "English Mock",
+                "total_marks": float(row['Eng_Total']),
+                "marks_obtained": float(row['Eng_Obtained']),
+                "total_attempt": float(row['Eng_Attempts']) if not pd.isna(row.get('Eng_Attempts')) else float(row['Eng_Obtained']),
+                "wrong_answers": float(row['Eng_Wrong']) if not pd.isna(row.get('Eng_Wrong')) else 0.0,
+                "accuracy": float(row['Eng_Accuracy']) if not pd.isna(row.get('Eng_Accuracy')) else 100.0,
+                "baseline": float(row['Eng_Baseline']) if not pd.isna(row.get('Eng_Baseline')) else 35.0
             }
 
-        # 2. Structure Shorthand Section
+        # Reasoning Parser (Mapping Res_ to Reasoning)
+        if not pd.isna(row.get('Res_Total')) and not pd.isna(row.get('Res_Obtained')):
+            academic_data["reasoning"] = {
+                "mock_desc": str(row['Res_Mock_Desc']) if not pd.isna(row.get('Res_Mock_Desc')) else "Reasoning Mock",
+                "total_marks": float(row['Res_Total']),
+                "marks_obtained": float(row['Res_Obtained']),
+                "total_attempt": float(row['Res_Attempts']) if not pd.isna(row.get('Res_Attempts')) else float(row['Res_Obtained']),
+                "wrong_answers": float(row['Res_Wrong']) if not pd.isna(row.get('Res_Wrong')) else 0.0,
+                "accuracy": float(row['Res_Accuracy']) if not pd.isna(row.get('Res_Accuracy')) else 100.0,
+                "baseline": float(row['Res_Baseline']) if not pd.isna(row.get('Res_Baseline')) else 35.0
+            }
+
+        # General Awareness Parser
+        if not pd.isna(row.get('GA_Total')) and not pd.isna(row.get('GA_Obtained')):
+            academic_data["ga"] = {
+                "mock_desc": str(row['GA_Mock_Desc']) if not pd.isna(row.get('GA_Mock_Desc')) else "GA Mock",
+                "total_marks": float(row['GA_Total']),
+                "marks_obtained": float(row['GA_Obtained']),
+                "total_attempt": float(row['GA_Attempts']) if not pd.isna(row.get('GA_Attempts')) else float(row['GA_Obtained']),
+                "wrong_answers": float(row['GA_Wrong']) if not pd.isna(row.get('GA_Wrong')) else 0.0,
+                "accuracy": float(row['GA_Accuracy']) if not pd.isna(row.get('GA_Accuracy')) else 100.0,
+                "baseline": float(row['GA_Baseline']) if not pd.isna(row.get('GA_Baseline')) else 35.0
+            }
+
+        # 2. Map Shorthand Data Block
         shorthand_data = None
-        if not pd.isna(row['Topic']) or not pd.isna(row['Speed(WPM)']):
+        if not pd.isna(row.get('Shorthand_Topic')) or not pd.isna(row.get('Shorthand_WPM')):
             shorthand_data = {
-                "topic": str(row['Topic']) if not pd.isna(row['Topic']) else "Dictation Drill",
-                "speed_wpm": float(row['Speed(WPM)']) if not pd.isna(row['Speed(WPM)']) else 80.0,
-                "accuracy": float(row['Accuracy(%)']) if not pd.isna(row['Accuracy(%)']) else 100.0,
-                "word_count": float(row['Word_Count']) if not pd.isna(row['Word_Count']) else 0.0,
-                "notes": str(row['Notes']) if not pd.isna(row['Notes']) else ""
+                "topic": str(row['Shorthand_Topic']) if not pd.isna(row['Shorthand_Topic']) else "Dictation Drill",
+                "speed_wpm": float(row['Shorthand_WPM']) if not pd.isna(row['Shorthand_WPM']) else 80.0,
+                "accuracy": float(row['Shorthand_Accuracy']) if not pd.isna(row['Shorthand_Accuracy']) else 100.0,
+                "word_count": float(row['Shorthand_Count']) if not pd.isna(row['Shorthand_Count']) else 0.0,
+                "notes": str(row['Remarks']) if not pd.isna(row['Remarks']) else ""
             }
 
-        # 3. Structure Miscellaneous Habits Section (Mapping 1, 0, or B)
+        # 3. Map Habit Data Block
         def map_habit(val):
             val_str = str(val).strip().upper()
             if val_str in ['1', '1.0', 'Y', 'PRESENT']: return 'present'
@@ -85,13 +90,12 @@ def parse_excel_to_json():
             return 'absent'
 
         miscellaneous_data = {
-            "english_vocabulary": map_habit(row.get('Eng_Vocab', 0)),
-            "typing_practice": map_habit(row.get('Typing_Practice', 0)),
-            "computer": map_habit(row.get('Computer', 0)),
-            "shorthand_stroke": map_habit(row.get('Shorthand_Stroke', 0))
+            "english_vocabulary": map_habit(row.get('Habit_Vocab', 0)),
+            "typing_practice": map_habit(row.get('Habit_Typing', 0)),
+            "computer": map_habit(row.get('Habit_Computer', 0)),
+            "shorthand_stroke": map_habit(row.get('Habit_Stroke', 0))
         }
 
-        # Compile chronological day node
         day_node = {
             "date": date_str,
             "academic_data": academic_data,
@@ -100,25 +104,24 @@ def parse_excel_to_json():
         }
         database.append(day_node)
         
-    # Sort database by date descending to prioritize fresh logs at the top
     database.sort(key=lambda x: x['date'], reverse=True)
     
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
         json.dump(database, f, indent=4)
         
-    print(f"✅ Success: Synced {len(database)} records into database profile.")
+    print(f"✅ Success: Processed records into data.json layout.")
     return True
 
 def push_to_cloud():
-    print("🚀 Commencing background cloud pipeline push...")
+    print("🚀 Commencing cloud upload...")
     try:
         os.chdir(BASE_DIR)
         subprocess.run(["git", "add", "data.json"], check=True)
-        subprocess.run(["git", "commit", "-m", "sync ledger profile metrics"], check=True)
+        subprocess.run(["git", "commit", "-m", "sync custom horizontal matrix rows"], check=True)
         subprocess.run(["git", "push", "origin", "main"], check=True)
-        print("🎯 Cloud sync successful. Analytics portal initialized live.")
+        print("🎯 Cloud update successful!")
     except Exception as e:
-        print(f"⚠️ Git core push deferred or encountered validation mismatch: {e}")
+        print(f"⚠️ Git synchronization report: {e}")
 
 if __name__ == "__main__":
     if parse_excel_to_json():
