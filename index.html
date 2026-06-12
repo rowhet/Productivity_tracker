@@ -3,284 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Process Intelligence Hub</title>
+    <title>Personal Log Stream</title>
     <script src="https://cdn.jsdelivr.net/npm/tailwind-cdn@3.4.1/index.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #1e293b; }
-        .secure-gate {
-            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
-                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-        }
-        .crypto-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-    </style>
 </head>
-<body class="min-h-screen flex antialiased">
+<body class="bg-slate-50 text-slate-800 min-h-screen p-6 md:p-12">
 
-    <div id="password-gate" class="secure-gate fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-500">
-        <div class="bg-white/95 crypto-blur w-full max-w-md rounded-2xl shadow-2xl p-8 border border-white/20 text-center transform transition-all">
-            <div class="inline-flex p-3 bg-blue-50 rounded-xl text-blue-600 mb-4">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight">PROCESS CORE PLATFORM</h1>
-            <p class="text-sm text-slate-500 mt-1 mb-6">Enter system credentials to decrypt dashboard architecture.</p>
-            
-            <div class="space-y-4">
-                <input type="password" id="access-key" placeholder="Enter Authorization Access Key" 
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-lg">
-                
-                <button onclick="authenticateGateway()" 
-                        class="w-full py-3 bg-[#10b981] hover:bg-[#0d9488] text-white rounded-xl text-sm font-semibold tracking-wide shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2">
-                    <span>Unlock Workspace</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
-                <div id="gate-error" class="text-xs text-red-500 font-medium hidden">Validation failure. Secure key authorization denied.</div>
-            </div>
+    <div class="max-w-2xl mx-auto">
+        <header class="mb-12 border-b border-slate-200 pb-6">
+            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Raw Log Stream</h1>
+            <p class="text-sm text-slate-500 mt-1">Reading live updates directly from a flat text file ledger.</p>
+        </header>
+
+        <div id="blog-feed" class="space-y-8">
+            <p class="text-slate-400 text-sm italic">Accessing file streams...</p>
         </div>
     </div>
 
-    <div id="dashboard-core" class="w-full min-h-screen flex hidden">
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-10">
-            <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm tracking-tighter">🚀</div>
-                <div>
-                    <h2 class="text-sm font-bold text-slate-900 tracking-tight uppercase">Core Panel</h2>
-                    <p class="text-[11px] text-slate-400 font-medium">Evolution Hub v2.1</p>
-                </div>
-            </div>
-            
-            <nav class="flex-1 p-4 space-y-1">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Subject Performance</div>
-                <button onclick="switchDeck('english')" id="btn-english" class="nav-tab w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-600">English Mocks</button>
-                <button onclick="switchDeck('arithmetic')" id="btn-arithmetic" class="nav-tab w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Arithmetic Mocks</button>
-                <button onclick="switchDeck('ga')" id="btn-ga" class="nav-tab w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">General Awareness</button>
-                <button onclick="switchDeck('reasoning')" id="btn-reasoning" class="nav-tab w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Logical Reasoning</button>
-                
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-6 mb-2">Skills Pipeline</div>
-                <button onclick="switchDeck('shorthand')" id="btn-shorthand" class="nav-tab w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Shorthand Records</button>
-                
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-6 mb-2">Operational Habits</div>
-                <button onclick="switchDeck('habits')" id="btn-habits" class="nav-tab w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">Consistency Ledger</button>
-            </nav>
-        </aside>
-
-        <main class="flex-1 ml-64 p-8 bg-[#f8f9fa] min-h-screen">
-            <header class="flex justify-between items-center pb-6 border-b border-slate-200 mb-8">
-                <div>
-                    <h3 id="panel-title" class="text-xl font-bold text-slate-900 tracking-tight">English Evaluation Ledger</h3>
-                    <p id="panel-desc" class="text-xs text-slate-500 mt-0.5">Chronological list grid tracking performance metrics against standardized execution profiles.</p>
-                </div>
-            </header>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Academic Accuracy</p>
-                        <h4 id="kpi-1" class="text-2xl font-bold text-slate-900 mt-1">--</h4>
-                    </div>
-                    <span class="p-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-bold">🎯</span>
-                </div>
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Velocity Focus</p>
-                        <h4 id="kpi-2" class="text-2xl font-bold text-slate-900 mt-1">--</h4>
-                    </div>
-                    <span class="p-2 bg-purple-50 text-purple-600 rounded-lg text-sm font-bold">⚡</span>
-                </div>
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Discipline Ratio</p>
-                        <h4 id="kpi-3" class="text-2xl font-bold text-slate-900 mt-1">--</h4>
-                    </div>
-                    <span class="p-2 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-bold">📅</span>
-                </div>
-            </div>
-
-            <div id="ledger-canvas" class="space-y-4"></div>
-        </main>
-    </div>
-
     <script>
-        let rawLogData = [];
-        let activeDeck = "english";
-        // Setup secure password string encryption signature target
-        const SECURITY_HASH = "12345"; 
-
-        function authenticateGateway() {
-            const input = document.getElementById('access-key').value;
-            if (input === SECURITY_HASH) {
-                document.getElementById('password-gate').classList.add('opacity-0', 'pointer-events-none');
-                document.getElementById('dashboard-core').classList.remove('hidden');
-                initCorePlatform();
-            } else {
-                const err = document.getElementById('gate-error');
-                err.classList.remove('hidden');
-                err.classList.add('animate-shake');
-            }
-        }
-
-        async function initCorePlatform() {
+        async function loadTextBlog() {
+            const feedContainer = document.getElementById('blog-feed');
             try {
-                const response = await fetch('data.json?nocache=' + new Date().getTime());
-                rawLogData = await response.json();
-                calculateSystemKPIs();
-                renderActiveView();
-            } catch (e) {
-                console.error("System parameter validation failure:", e);
-            }
-        }
-
-        function calculateSystemKPIs() {
-            let totalAcc = 0, academicCount = 0;
-            let maxSpeed = 0;
-            let habitsTotal = 0, habitsChecked = 0;
-
-            rawLogData.forEach(day => {
-                // Compute Academic Mean Metrics
-                Object.values(day.academic_data).forEach(m => {
-                    if (m) { totalAcc += m.accuracy; academicCount++; }
+                // Fetch the raw text file directly from your repository path
+                const response = await fetch('blog.txt?nocache=' + new Date().getTime());
+                if (!response.ok) throw new Error('File path resolution mismatch');
+                
+                const rawText = await response.text();
+                
+                // Split the content into individual posts using the triple hyphen delimiter
+                const posts = rawText.split('---').map(post => post.trim()).filter(post => post.length > 0);
+                
+                feedContainer.innerHTML = ''; // Clear loading indicator
+                
+                posts.forEach(post => {
+                    // Split the first line (Metadata/Date) from the rest of the body text
+                    const lines = post.split('\n');
+                    const headerLine = lines[0];
+                    const bodyText = lines.slice(1).join('<br>');
+                    
+                    const postCard = document.createElement('article');
+                    postCard.className = "bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3";
+                    postCard.innerHTML = `
+                        <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">${headerLine}</div>
+                        <p class="text-slate-700 leading-relaxed text-sm font-normal">${bodyText}</p>
+                    `;
+                    feedContainer.appendChild(postCard);
                 });
-                // Compute Shorthand Maximum Metrics
-                if(day.shorthand_data && day.shorthand_data.speed_wpm) {
-                    if (day.shorthand_data.speed_wpm > maxSpeed) maxSpeed = day.shorthand_data.speed_wpm;
-                }
-                // Compute Habit Ratios
-                if(day.miscellaneous_data) {
-                    Object.values(day.miscellaneous_data).forEach(h => {
-                        habitsTotal++;
-                        if (h === 'present') habitsChecked++;
-                    });
-                }
-            });
-
-            document.getElementById('kpi-1').innerText = academicCount ? `${Math.round(totalAcc/academicCount)}% Avg` : 'No Mocks';
-            document.getElementById('kpi-2').innerText = maxSpeed ? `${maxSpeed} WPM` : '0 WPM';
-            document.getElementById('kpi-3').innerText = habitsTotal ? `${Math.round((habitsChecked/habitsTotal)*100)}% Compliance` : '--';
-        }
-
-        function switchDeck(viewKey) {
-            activeDeck = viewKey;
-            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('bg-blue-50', 'text-blue-600'));
-            document.querySelectorAll('.nav-tab').forEach(b => b.classList.add('text-slate-600', 'hover:bg-slate-50'));
-            document.getElementById(`btn-${viewKey}`).classList.add('bg-blue-50', 'text-blue-600');
-
-            const headers = {
-                english: ["English Evaluation Ledger", "Chronological list grid tracking performance metrics against standardized execution profiles."],
-                arithmetic: ["Arithmetic Assessment Terminal", "Numerical analysis tracking sectional speed metrics and targeted thresholds."],
-                ga: ["General Awareness Directory", "Syllabus checkpoints and scoring data tracking optimization profiles."],
-                reasoning: ["Logical Reasoning Registry", "Structural evaluation scores monitoring spatial and analytics parameters."],
-                shorthand: ["Shorthand Dictation Logs", "Granular logs focusing on dictation topics, shorthand outline stroke precision, and word count speed metrics."],
-                habits: ["Discipline Compliance Board", "Chronological visual ledger display summarizing target execution maps."]
-            };
-
-            document.getElementById('panel-title').innerText = headers[viewKey][0];
-            document.getElementById('panel-desc').innerText = headers[viewKey][1];
-            renderActiveView();
-        }
-
-        function renderActiveView() {
-            const canvas = document.getElementById('ledger-canvas');
-            canvas.innerHTML = '';
-
-            if (rawLogData.length === 0) {
-                canvas.innerHTML = `<div class="bg-white border border-slate-200 p-8 rounded-xl text-center text-sm text-slate-400">No database records located. Sync excel file pipeline.</div>`;
-                return;
-            }
-
-            rawLogData.forEach(day => {
-                if (['english', 'arithmetic', 'ga', 'reasoning'].includes(activeDeck)) {
-                    const metrics = day.academic_data[activeDeck];
-                    if (!metrics) return; // Skip if no test on this date
-
-                    const statusColor = metrics.marks_obtained >= metrics.baseline ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200';
-                    const accuracyColor = metrics.accuracy >= 90 ? 'text-emerald-600' : metrics.accuracy >= 80 ? 'text-blue-600' : 'text-rose-600';
-
-                    const card = document.createElement('div');
-                    card.className = "bg-white border border-slate-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4";
-                    card.innerHTML = `
-                        <div class="flex items-start space-x-4">
-                            <div class="px-3 py-2 bg-slate-100 rounded-lg text-center min-w-[90px]">
-                                <span class="block text-xs font-bold text-slate-700 uppercase tracking-tight">${day.date}</span>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-slate-900 text-base">${metrics.mock_desc}</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">Attempt Context: <span class="font-medium text-slate-600">${metrics.total_attempt} Total Attempts</span> • <span class="text-rose-500 font-medium">${metrics.wrong_answers} Incorrect Registration</span></p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-6">
-                            <div class="text-right">
-                                <span class="text-xs block text-slate-400 uppercase tracking-wider font-semibold">Precision</span>
-                                <span class="text-base font-bold ${accuracyColor}">${metrics.accuracy}%</span>
-                            </div>
-                            <div class="px-4 py-2 border rounded-xl text-center min-w-[120px] ${statusColor}">
-                                <span class="text-xs block opacity-75 uppercase tracking-wide font-medium">Scored Mark</span>
-                                <span class="text-lg font-bold">${metrics.marks_obtained} / ${metrics.total_marks}</span>
-                            </div>
-                        </div>`;
-                    canvas.appendChild(card);
-
-                } else if (activeDeck === 'shorthand') {
-                    const sh = day.shorthand_data;
-                    if (!sh) return;
-
-                    const accColor = sh.accuracy >= 95 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : sh.accuracy >= 90 ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200';
-
-                    const card = document.createElement('div');
-                    card.className = "bg-white border border-slate-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-all space-y-3";
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md uppercase tracking-tight">${day.date}</span>
-                                <h4 class="font-bold text-slate-900 text-lg mt-2">${sh.topic}</h4>
-                            </div>
-                            <div class="flex space-x-2">
-                                <span class="px-3 py-1.5 bg-blue-50 text-blue-700 font-bold border border-blue-100 rounded-lg text-sm">${sh.speed_wpm} WPM</span>
-                                <span class="px-3 py-1.5 border rounded-lg text-sm font-bold ${accColor}">${sh.accuracy}% Accuracy</span>
-                            </div>
-                        </div>
-                        ${sh.notes ? `<p class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 font-normal italic">"${sh.notes}"</p>` : ''}
-                        <div class="text-xs text-slate-400 flex items-center space-x-1">
-                            <span>Gross Volumetric Processing: <strong>${sh.word_count} words written</strong></span>
-                        </div>`;
-                    canvas.appendChild(card);
-
-                } else if (activeDeck === 'habits') {
-                    const hb = day.miscellaneous_data;
-                    if (!hb) return;
-
-                    const getBadge = (status) => {
-                        if (status === 'present') return `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md text-xs font-bold flex items-center space-x-1"><span>●</span> <span>COMPLETED</span></span>`;
-                        if (status === 'planned_break') return `<span class="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md text-xs font-bold flex items-center space-x-1"><span>■</span> <span>PLANNED BREAK</span></span>`;
-                        return `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-md text-xs font-bold flex items-center space-x-1"><span>✕</span> <span>MISSED</span></span>`;
-                    };
-
-                    const card = document.createElement('div');
-                    card.className = "bg-white border border-slate-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4";
-                    card.innerHTML = `
-                        <div class="px-3 py-2 bg-slate-900 text-white font-bold rounded-lg text-center tracking-tight text-xs min-w-[95px]">
-                            ${day.date}
-                        </div>
-                        <div class="grid grid-cols-2 md:flex md:items-center gap-4 flex-1 justify-around ml-4">
-                            <div class="flex flex-col space-y-1"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">English Vocab</span>${getBadge(hb.english_vocabulary)}</div>
-                            <div class="flex flex-col space-y-1"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Typing Drill</span>${getBadge(hb.typing_practice)}</div>
-                            <div class="flex flex-col space-y-1"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Computer Theory</span>${getBadge(hb.computer)}</div>
-                            <div class="flex flex-col space-y-1"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Shorthand Stroke</span>${getBadge(hb.shorthand_stroke)}</div>
-                        </div>`;
-                    canvas.appendChild(card);
-                }
-            });
-
-            // If a tab is active but contains no records for that specific subject view
-            if(canvas.children.length === 0) {
-                canvas.innerHTML = `<div class="bg-white border border-slate-200 p-8 rounded-xl text-center text-sm text-slate-400">No contextual logs logged for this view stream on this timeline cycle.</div>`;
+                
+            } catch (error) {
+                feedContainer.innerHTML = `<div class="bg-red-50 text-red-700 border border-red-100 p-4 rounded-xl text-sm font-medium">❌ Error: Could not parse blog.txt stream. Ensure the file is pushed to GitHub.</div>`;
             }
         }
 
-        // Initialize password submit input via generic enter keypress
-        document.getElementById("access-key").addEventListener("keyup", function(event) {
-            if (event.key === "Enter") { authenticateGateway(); }
-        });
+        // Initialize load sequence on window mounting
+        window.onload = loadTextBlog;
     </script>
 </body>
 </html>
