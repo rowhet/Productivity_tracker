@@ -3,59 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Log Stream</title>
+    <title>Process Terminal Logs</title>
     <script src="https://cdn.jsdelivr.net/npm/tailwind-cdn@3.4.1/index.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(rgba(10, 15, 30, 0.7), rgba(10, 15, 30, 0.85)), 
+                        url('img.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen p-6 md:p-12">
+<body class="min-h-screen antialiased text-slate-200 selection:bg-teal-500 selection:text-white">
 
-    <div class="max-w-2xl mx-auto">
-        <header class="mb-12 border-b border-slate-200 pb-6">
-            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Raw Log Stream</h1>
-            <p class="text-sm text-slate-500 mt-1">Reading live updates directly from a flat text file ledger.</p>
-        </header>
-
-        <div id="blog-feed" class="space-y-8">
-            <p class="text-slate-400 text-sm italic">Accessing file streams...</p>
+    <header class="glass-header sticky top-0 z-50 w-full px-6 py-4 mb-12">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 bg-gradient-to-tr from-teal-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
+                    <svg class="w-5 h-5 text-slate-950 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-tight uppercase">Process Stream</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-wider uppercase">Static File Ledger</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="h-2 w-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Live Stream</span>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 pb-24">
+        <div id="blog-feed" class="space-y-6">
+            <div class="glass-card p-8 rounded-2xl animate-pulse flex flex-col space-y-4">
+                <div class="h-4 bg-white/10 rounded w-1/4"></div>
+                <div class="h-3 bg-white/5 rounded w-full"></div>
+                <div class="h-3 bg-white/5 rounded w-5/6"></div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        async function loadTextBlog() {
+        async function fetchSystemLogs() {
             const feedContainer = document.getElementById('blog-feed');
             try {
-                // Fetch the raw text file directly from your repository path
+                // Fetch the text stream directly with timestamp busting cache
                 const response = await fetch('blog.txt?nocache=' + new Date().getTime());
-                if (!response.ok) throw new Error('File path resolution mismatch');
+                if (!response.ok) throw new Error('File stream unreachable');
                 
-                const rawText = await response.text();
+                const dataText = await response.text();
                 
-                // Split the content into individual posts using the triple hyphen delimiter
-                const posts = rawText.split('---').map(post => post.trim()).filter(post => post.length > 0);
+                // Segment content blocks via the triple-hyphen break
+                const logs = dataText.split('---').map(log => log.trim()).filter(log => log.length > 0);
                 
-                feedContainer.innerHTML = ''; // Clear loading indicator
+                feedContainer.innerHTML = ''; 
                 
-                posts.forEach(post => {
-                    // Split the first line (Metadata/Date) from the rest of the body text
-                    const lines = post.split('\n');
-                    const headerLine = lines[0];
-                    const bodyText = lines.slice(1).join('<br>');
+                logs.forEach(log => {
+                    const lines = log.split('\n');
+                    const metadataHeader = lines[0];
+                    const bodyParagraphs = lines.slice(1).join('<br>').trim();
                     
-                    const postCard = document.createElement('article');
-                    postCard.className = "bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3";
-                    postCard.innerHTML = `
-                        <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">${headerLine}</div>
-                        <p class="text-slate-700 leading-relaxed text-sm font-normal">${bodyText}</p>
+                    const card = document.createElement('article');
+                    card.className = "glass-card p-8 rounded-2xl hover:bg-white/[0.1] transition-all duration-300 group flex flex-col space-y-4";
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-teal-400 tracking-wider uppercase bg-teal-500/10 border border-teal-500/20 px-3 py-1 rounded-md">
+                                ${metadataHeader}
+                            </span>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[14px] font-normal tracking-wide">
+                            ${bodyParagraphs}
+                        </p>
                     `;
-                    feedContainer.appendChild(postCard);
+                    feedContainer.appendChild(card);
                 });
                 
-            } catch (error) {
-                feedContainer.innerHTML = `<div class="bg-red-50 text-red-700 border border-red-100 p-4 rounded-xl text-sm font-medium">❌ Error: Could not parse blog.txt stream. Ensure the file is pushed to GitHub.</div>`;
+            } catch (err) {
+                feedContainer.innerHTML = `
+                    <div class="glass-card border-red-500/30 p-6 rounded-2xl text-center">
+                        <p class="text-sm text-red-400 font-medium">❌ System Error: Could not parse 'blog.txt' from current origin context.</p>
+                    </div>`;
             }
         }
 
-        // Initialize load sequence on window mounting
-        window.onload = loadTextBlog;
+        window.onload = fetchSystemLogs;
     </script>
 </body>
 </html>
