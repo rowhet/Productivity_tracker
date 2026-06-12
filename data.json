@@ -1,32 +1,48 @@
 [
     {
-        "date": "2026-06-11",
+        "date": "2026-06-12",
         "academic_data": {
             "english": {
-                "mock_desc": "Eng",
+                "mock_desc": "SSC",
                 "total_marks": 50.0,
                 "marks_obtained": 45.0,
                 "total_attempt": 45.0,
                 "wrong_answers": 0.0,
-                "accuracy": 90.0,
+                "accuracy": 100.0,
                 "baseline": 35.0
             },
             "arithmetic": null,
-            "ga": null,
-            "reasoning": null
+            "ga": {
+                "mock_desc": "SSC",
+                "total_marks": 50.0,
+                "marks_obtained": 35.0,
+                "total_attempt": 35.0,
+                "wrong_answers": 0.0,
+                "accuracy": 100.0,
+                "baseline": 35.0
+            },
+            "reasoning": {
+                "mock_desc": "SSC",
+                "total_marks": 50.0,
+                "marks_obtained": 37.5,
+                "total_attempt": 40.0,
+                "wrong_answers": 5.0,
+                "accuracy": 100.0,
+                "baseline": 35.0
+            }
         },
         "shorthand_data": {
+            "topic": "Introductory Session",
             "speed_wpm": 80.0,
+            "accuracy": 95.0,
             "word_count": 400.0,
-            "accuracy": 80.0,
-            "topic": "Farmer",
-            "notes": ""
+            "notes": "Good"
         },
         "miscellaneous_data": {
             "english_vocabulary": "present",
             "typing_practice": "present",
-            "computer": "present",
-            "shorthand_stroke": "present"
+            "computer": "planned_break",
+            "shorthand_stroke": "absent"
         }
     }
 ]
